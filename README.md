@@ -1,7 +1,7 @@
 # terraform_aws_vpc
 - [x] Status:  Ainda em desenvolvimento.
 ###
-### Módulo para criar uma VPC na AWS composta dos recursos, Vpc, subnets (publicas e privadas), network Acls, route tables e internet gateway. Para utilizar este módulo é necessário os seguintes arquivos especificados logo abaixo:
+### Módulo para criar um Security Group na AWS. Para utilizar este módulo é necessário os seguintes arquivos especificados logo abaixo:
 
    <summary>versions.tf - Arquivo com as versões dos providers.</summary>
 
@@ -18,7 +18,7 @@ terraform {
  }
 ```
 #
-<summary>main.tf - Arquivo que irá consumir o módulo para criar a infraestrutura.</summary>
+<summary>main.tf - Arquivo que irá consumir o módulo para criar a infraestrutura. Caso você já tenha o arquivo no seu projeto basta copiar e colar o bloco do módulo </summary>
 
 ```hcl
 provider "aws" {
@@ -26,53 +26,28 @@ provider "aws" {
 }
 
 
-module "network" {
-  source          = "git::https://github.com/israeldoamaral/terraform-vpc-aws"
-  region          = var.region
-  cidr            = var.cidr
-  count_available = var.count_available
-  vpc             = module.network.vpc
-  tag_vpc         = var.tag_vpc
-  nacl            = var.nacl
+module "security_group" {
+  source  = "git::https://github.com/israeldoamaral/terraform-sg-aws"
+  vpc     = module.network.vpc
+  sg-cidr = var.sg-cidr
+  # tag-sg  = var.tag-sg
+  tag-sg  = "Dev"
+
 }
+
 ```
 #
 <summary>variables.tf - Arquivo que contém as variáveis que o módulo irá utilizar e pode ter os valores alterados de acordo com a necessidade.</summary>
 
 ```hcl
-variable "region" {
-  type        = string
-  description = "Região na AWS"
-  default     = "us-east-1"
-}
-
-variable "cidr" {
-  description = "CIDR da VPC"
-  type        = string
-  default     = "10.10.0.0/16"
-}
-
-variable "count_available" {
-  type        = number
-  description = "Numero de Zonas de disponibilidade"
-  default     = 2
-}
-
-variable "tag_vpc" {
-  description = "Tag Name da VPC"
-  type        = string
-  default     = "VPC-name"
-}
-
-
-variable "nacl" {
-  description = "Regras de Network Acls AWS"
-  type        = map(object({ protocol = string, action = string, cidr_blocks = string, from_port = number, to_port = number }))
+variable "sg-cidr" {
+  description = "Mapa de portas de serviços"
+  # type        = map(object({ protocol = string, action = string, cidr_blocks = string, from_port = number, to_port = number }))
   default = {
-    100 = { protocol = "tcp", action = "allow", cidr_blocks = "0.0.0.0/0", from_port = 22, to_port = 22 }
-    105 = { protocol = "tcp", action = "allow", cidr_blocks = "0.0.0.0/0", from_port = 80, to_port = 80 }
-    110 = { protocol = "tcp", action = "allow", cidr_blocks = "0.0.0.0/0", from_port = 443, to_port = 443 }
-    150 = { protocol = "tcp", action = "allow", cidr_blocks = "0.0.0.0/0", from_port = 1024, to_port = 65535 }
+    22   = { to_port = 22, description = "Entrada ssh", protocol = "tcp", cidr_blocks = ["0.0.0.0/0"] }
+    80   = { to_port = 80, description = "Entrada http", protocol = "tcp", cidr_blocks = ["0.0.0.0/0"] }
+    443  = { to_port = 443, description = "Entrada https", protocol = "tcp", cidr_blocks = ["0.0.0.0/0"] }
+    8080 = { to_port = 8080, description = "Entrada custom para app", protocol = "tcp", cidr_blocks = ["0.0.0.0/0"] }
   }
 }
 
@@ -81,19 +56,9 @@ variable "nacl" {
 <summary>outputs.tf - Outputs de recursos que serão utilizados em outros módulos.</summary>
 
 ```hcl
-output "vpc" {
-  description = "Idendificador da VPC"
-  value       = module.network.vpc
-}
-
-output "public_subnet" {
-  description = "Subnet public "
-  value       = module.network.public_subnet
-}
-
-output "private_subnet" {
-  description = "Subnet private "
-  value       = module.network.private_subnet
+output "security_Group" {
+  description = "Security Group"
+  value = module.security_group.security_group_id
 }
 
 ```
@@ -113,7 +78,7 @@ No providers.
 
 | Name | Source | Version |
 |------|--------|---------|
-| <a name="module_network"></a> [network](#module\_network) | github.com/israeldoamaral/terraform-vpc-aws | n/a |
+| <a name="module_sg"></a> [sg](#module\_sg) | github.com/israeldoamaral/terraform-sg-aws | n/a |
 
 ## Resources
 
