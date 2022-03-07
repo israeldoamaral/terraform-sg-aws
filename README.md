@@ -1,4 +1,4 @@
-# terraform_aws_vpc
+# terraform_sg-aws
 - [x] Status:  Ainda em desenvolvimento.
 ###
 ### Módulo para criar um Security Group na AWS. Para utilizar este módulo é necessário os seguintes arquivos especificados logo abaixo:
@@ -7,12 +7,12 @@
 
 ```hcl
 terraform {
-    required_version = "~> 0.15.4"
+    required_version = ">= 0.15.4"
 
     required_providers {
         aws = {
         source  = "hashicorp/aws"
-        version = "~> 3.0"
+        version = ">= 3.0"
         }
     }
  }
