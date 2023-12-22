@@ -24,6 +24,6 @@ resource "aws_security_group" "sg" {
   }
 
   tags = {
-      Name = format("%s-sg", var.tag-sg)
+      Name = format("SG-%s", var.tag-sg)
   }
 }
