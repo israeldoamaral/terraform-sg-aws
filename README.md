@@ -7,15 +7,13 @@
 
 ```hcl
 terraform {
-    required_version = ">= 0.15.4"
-
-    required_providers {
-        aws = {
-        source  = "hashicorp/aws"
-        version = ">= 3.0"
-        }
+  required_providers {
+    aws = {
+      source = "hashicorp/aws"
+      version = "5.31.0"
     }
- }
+  }
+}
 ```
 #
 <summary>main.tf - Arquivo que irá consumir o módulo para criar a infraestrutura. Caso você já tenha o arquivo no seu projeto basta copiar e colar o bloco do módulo </summary>
