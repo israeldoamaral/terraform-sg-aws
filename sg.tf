@@ -1,5 +1,5 @@
 resource "aws_security_group" "sg" {
-  name = format("%s-sg", var.tag-sg)
+  name = format("SG-%s", var.tag-sg)
   description = "Allow TLS inbount trafic"
   vpc_id = var.vpc
 
